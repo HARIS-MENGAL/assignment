@@ -1,0 +1,62 @@
+.Mdiv{
+    display: grid;
+    grid-template-rows: repeat(6 ,1fr);
+    grid-template-columns: repeat(12 , 1fr);
+    grid-gap:5px;
+}
+
+
+
+.box1{
+    text-align: center;
+    color: white;
+    margin: 8px;
+    padding: 10px;
+    background:tomato;
+    grid-column:span 12;
+
+}
+
+.box2{
+    text-align: center;
+    color: white;
+    margin: 8px;
+    padding:10px;
+    background:tomato;
+    grid-column:span 6;
+}
+.box3{
+    text-align: center;
+    color: white;
+    margin: 8px;
+    padding:10px;
+    background:tomato;
+    grid-column:span 4;
+}
+
+.box4{
+    text-align: center;
+    margin: 8px;
+    padding: 10px;
+    background:tomato;
+    grid-column:span 3;
+    color: white
+}
+
+.box5{
+     text-align: center;
+    color: white;
+    margin: 8px;
+    padding: 10px;
+    background:tomato;
+    grid-column:span 2
+}
+
+.box{
+    text-align: center;
+    color: white;
+    margin: 8px;
+    padding: 10px;
+    background:tomato;
+    grid-column:span 1;
+}
