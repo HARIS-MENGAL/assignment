@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .quiz-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .options {
+            margin-bottom: 20px;
+        }
+        .option {
+            display: block;
+            padding: 10px;
+            margin-bottom: 8px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        .option.selected {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Quiz App</h1>
+    <div class="quiz-container">
+        <div id="quiz">
+            <div id="question" class="question"></div>
+            <div id="options" class="options"></div>
+            <div class="controls">
+                <button id="prev-btn">Previous</button>
+                <button id="next-btn">Next</button>
+                <button id="submit-btn" class="hide">Submit</button>
+            </div>
+        </div>
+        <div id="results" class="result hide"></div>
+    </div>
+
+    <script>
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "What is the capital of France?",
+                options: ["London", "Berlin", "Paris", "Madrid"],
+                answer: "Paris"
+            },
+            {
+                question: "Which planet is known as the Red Planet?",
+                options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                answer: "Mars"
+            },
+            {
+                question: "What is 2 + 2?",
+                options: ["3", "4", "5", "6"],
+                answer: "4"
+            },
+            {
+                question: "Who wrote 'Romeo and Juliet'?",
+                options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
+                answer: "William Shakespeare"
+            },
+            {
+                question: "Which element has the chemical symbol 'O'?",
+                options: ["Gold", "Oxygen", "Iron", "Osmium"],
+                answer: "Oxygen"
+            }
+        ];
+
+        // Quiz state
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = Array(quizQuestions.length).fill("");
+
+        // DOM elements
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const prevButton = document.getElementById("prev-btn");
+        const nextButton = document.getElementById("next-btn");
+        const submitButton = document.getElementById("submit-btn");
+        const resultsElement = document.getElementById("results");
+        const quizElement = document.getElementById("quiz");
+
+        // Initialize quiz
+        function loadQuestion() {
+            const question = quizQuestions[currentQuestion];
+            questionElement.textContent = `${currentQuestion + 1}. ${question.question}`;
+            
+            optionsElement.innerHTML = "";
+            question.options.forEach(option => {
+                const button = document.createElement("div");
+                button.textContent = option;
+                button.classList.add("option");
+                
+                if (userAnswers[currentQuestion] === option) {
+                    button.classList.add("selected");
+                }
+                
+                button.addEventListener("click", () => {
+                    selectOption(option);
+                });
+                
+                optionsElement.appendChild(button);
+            });
+            
+            updateButtons();
+        }
+
+        // Select an option
+        function selectOption(option) {
+            userAnswers[currentQuestion] = option;
+            
+            // Update UI to show selected option
+            document.querySelectorAll(".option").forEach(button => {
+                button.classList.remove("selected");
+                if (button.textContent === option) {
+                    button.classList.add("selected");
+                }
+            });
+        }
+
+        // Update button states
+        function updateButtons() {
+            prevButton.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === quizQuestions.length - 1) {
+                nextButton.classList.add("hide");
+                submitButton.classList.remove("hide");
+            } else {
+                nextButton.classList.remove("hide");
+                submitButton.classList.add("hide");
+            }
+        }
+
+        // Calculate score and show results
+        function showResults() {
+            score = 0;
+            for (let i = 0; i < quizQuestions.length; i++) {
+                if (userAnswers[i] === quizQuestions[i].answer) {
+                    score++;
+                }
+            }
+            
+            quizElement.classList.add("hide");
+            resultsElement.classList.remove("hide");
+            
+            resultsElement.innerHTML = `
+                <h2>Quiz Results</h2>
+                <p>You scored ${score} out of ${quizQuestions.length}!</p>
+                <button id="restart-btn">Restart Quiz</button>
+            `;
+            
+            document.getElementById("restart-btn").addEventListener("click", restartQuiz);
+        }
+
+        // Restart the quiz
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            userAnswers = Array(quizQuestions.length).fill("");
+            
+            quizElement.classList.remove("hide");
+            resultsElement.classList.add("hide");
+            
+            loadQuestion();
+        }
+
+        // Event listeners
+        prevButton.addEventListener("click", () => {
+            currentQuestion--;
+            loadQuestion();
+        });
+
+        nextButton.addEventListener("click", () => {
+            currentQuestion++;
+            loadQuestion();
+        });
+
+        submitButton.addEventListener("click", showResults);
+
+        // Start the quiz
+        loadQuestion();
+    </script>
+</body>
+</html>
